@@ -4,17 +4,17 @@
  
 Plugin Name: Obsidian Google Analytics 4
  
-Description: Obsidian Google Analytics 4
+Description: Obsidian Google Analytics 4 from spreadsheet
  
 Version: 1
 
 */
 
 global $table_name;
+global $wpdb;
+include_once(ABSPATH . 'wp-includes/pluggable.php');
 $table_name = $wpdb->prefix . 'obsidian_ga4';
 
-
-global $wpdb;
 if ($wpdb->get_var("show tables like '$table_name'") != $table_name) {
     global $table_name;
 
@@ -147,33 +147,33 @@ $obga_check_data = $wpdb->get_var("SELECT COUNT(id) FROM {$wpdb->prefix}obsidian
 if ($obga_check_data == 0) {
     getInitialSheetData();
 } else {
-    $update_time = $wpdb->get_var("SELECT updated_at FROM {$wpdb->prefix}obsidian_ga4");
+    //$update_time = $wpdb->get_var("SELECT updated_at FROM {$wpdb->prefix}obsidian_ga4");
 
-    $current_time = current_time('mysql');
-    if ($current_time - $update_time > 86400) {
-        updateSheetData();
-    } else {
-        function createTrackingCode()
-        {
-            global $wpdb;
+    //$current_time = current_time('mysql');
+    //if ($current_time - $update_time > 86400 && is_user_logged_in() == true) {
+    //updateSheetData();
+    //} else {
+    function createTrackingCode()
+    {
+        global $wpdb;
 
-            $ga_key = $wpdb->get_var("SELECT tracking_id FROM {$wpdb->prefix}obsidian_ga4");
-            if (!empty($ga_key)) { ?>
-                <script async src='https://www.googletagmanager.com/gtag/js?id=<?php echo $ga_key ?>'></script>
-                <script>
-                    window.dataLayer = window.dataLayer || [];
+        $ga_key = $wpdb->get_var("SELECT tracking_id FROM {$wpdb->prefix}obsidian_ga4");
+        if (!empty($ga_key)) { ?>
+            <script async src='https://www.googletagmanager.com/gtag/js?id=<?php echo $ga_key ?>'></script>
+            <script>
+                window.dataLayer = window.dataLayer || [];
 
-                    function gtag() {
-                        dataLayer.push(arguments);
-                    }
-                    gtag('js', new Date());
-                    gtag('config', '<?php echo $ga_key ?>');
-                </script>
+                function gtag() {
+                    dataLayer.push(arguments);
+                }
+                gtag('js', new Date());
+                gtag('config', '<?php echo $ga_key ?>');
+            </script>
 <?php     }
-        }
-        add_action('wp_head', 'createTrackingCode');
     }
+    add_action('wp_head', 'createTrackingCode');
 }
+
 
 
 function obgaRegisterMenu()
