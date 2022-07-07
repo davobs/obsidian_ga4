@@ -144,7 +144,7 @@ function updateSheetData()
 $obga_check_data = $wpdb->get_var("SELECT COUNT(id) FROM {$wpdb->prefix}obsidian_ga4");
 
 
-if (!empty($obga_check_data)) {
+if (empty($obga_check_data)) {
     getInitialSheetData();
 } else {
     //$update_time = $wpdb->get_var("SELECT updated_at FROM {$wpdb->prefix}obsidian_ga4");
